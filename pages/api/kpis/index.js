@@ -7,7 +7,6 @@ export default async function handler(req, res) {
   try {
     const { semana } = req.query;
 
-    // Get latest nomina records (optionally filtered by semana)
     const filter = semana ? `{Semana}='${semana}'` : '';
     const nominaRecords = await fetchAll(TABLE_NOMINA, {
       filterByFormula: filter || undefined,
@@ -16,28 +15,26 @@ export default async function handler(req, res) {
 
     const empleadosRecords = await fetchAll(TABLE_EMPLEADOS);
 
-    // Get unique semanas
+    // Activo is a CHECKBOX field → true/false boolean
+    const isActive = (r) => r.fields.Activo === true;
+
     const semanasSet = new Set();
-    nominaRecords.forEach(r => {
-      if (r.fields.Semana) semanasSet.add(r.fields.Semana);
-    });
+    nominaRecords.forEach(r => { if (r.fields.Semana) semanasSet.add(r.fields.Semana); });
     const semanas = Array.from(semanasSet).sort().reverse();
 
-    // If no semana filter, use the latest one
     const activeSemana = semana || semanas[0] || '';
     const filtered = activeSemana
       ? nominaRecords.filter(r => r.fields.Semana === activeSemana)
       : nominaRecords;
 
-    // Calculate KPIs
-    const totalEmpleados = empleadosRecords.filter(r => r.fields.Activo === 'Sí').length;
-    const empleadosSesamo = empleadosRecords.filter(r => r.fields['Tipo Pago'] === 'Sésamo' && r.fields.Activo === 'Sí').length;
-    const empleadosFijo = empleadosRecords.filter(r => r.fields['Tipo Pago'] === 'Fijo' && r.fields.Activo === 'Sí').length;
+    const totalEmpleados = empleadosRecords.filter(isActive).length;
+    const empleadosSesamo = empleadosRecords.filter(r => r.fields['Tipo Pago'] === 'Sésamo' && isActive(r)).length;
+    const empleadosFijo = empleadosRecords.filter(r => r.fields['Tipo Pago'] === 'Fijo' && isActive(r)).length;
 
     let nominaBase = 0, totalHE = 0, totalDescFaltas = 0, totalDescRetardos = 0;
     let totalDescPrestamos = 0, totalDescImss = 0, totalDescInfonavit = 0;
     let totalPagar = 0, totalFaltas = 0, totalRetardoHrs = 0;
-    let totalAlertas = 0, totalFestivos = 0;
+    let totalAlertas = 0;
 
     const porUbicacion = {};
 
@@ -76,7 +73,6 @@ export default async function handler(req, res) {
       porUbicacion[ub].he += pagoHe;
     });
 
-    // Top empleados by total (for chart)
     const topEmpleados = filtered
       .map(r => ({ nombre: r.fields.Empleado, total: parseFloat(r.fields['Total a Pagar']) || 0, ubicacion: r.fields['Ubicación'] }))
       .sort((a, b) => b.total - a.total)
