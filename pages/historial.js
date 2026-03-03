@@ -111,14 +111,14 @@ export default function Historial() {
                         <td><span className={`badge badge-${r['Ubicación'] === 'Oficina' ? 'blue' : 'green'}`}>{r['Ubicación']}</span></td>
                         <td style={{ fontFamily: 'JetBrains Mono' }}>{fmt(r['Sueldo Semanal'])}</td>
                         <td>{r['Días Trabajados'] || 0}</td>
-                        <td style={{ color: r['Días Falta'] > 0 ? 'var(--red)' : '', fontWeight: r['Días Falta'] > 0 ? 600 : 400 }}>{r['Días Falta'] || 0}</td>
-                        <td>{r['HE Netas'] || 0}</td>
-                        <td style={{ fontFamily: 'JetBrains Mono', color: r['Pago HE'] > 0 ? 'var(--blue)' : '' }}>{r['Pago HE'] > 0 ? fmt(r['Pago HE']) : '-'}</td>
-                        <td style={{ color: r['Retardos Hrs'] > 0 ? 'var(--orange)' : '' }}>
-                          {r['Retardos Hrs'] ? `${r['Retardos Hrs']}h` : '-'}
+                        <td style={{ color: parseFloat(r['Días Falta']) > 0 ? 'var(--red)' : '', fontWeight: parseFloat(r['Días Falta']) > 0 ? 600 : 400 }}>{parseFloat(r['Días Falta']) || 0}</td>
+                        <td>{parseFloat(r['HE Netas']) || 0}</td>
+                        <td style={{ fontFamily: 'JetBrains Mono', color: parseFloat(r['Pago HE']) > 0 ? 'var(--blue)' : '' }}>{parseFloat(r['Pago HE']) > 0 ? fmt(r['Pago HE']) : '-'}</td>
+                        <td style={{ color: parseFloat(r['Retardos Hrs']) > 0 ? 'var(--orange)' : '' }}>
+                          {parseFloat(r['Retardos Hrs']) > 0 ? `${r['Retardos Hrs']}h` : '-'}
                         </td>
-                        <td style={{ fontFamily: 'JetBrains Mono', color: 'var(--red)' }}>{r['Desc Faltas'] > 0 ? fmt(r['Desc Faltas']) : '-'}</td>
-                        <td style={{ fontFamily: 'JetBrains Mono', color: 'var(--red)' }}>{r['Desc Retardos'] > 0 ? fmt(r['Desc Retardos']) : '-'}</td>
+                        <td style={{ fontFamily: 'JetBrains Mono', color: 'var(--red)' }}>{parseFloat(r['Desc Faltas']) > 0 ? fmt(r['Desc Faltas']) : '-'}</td>
+                        <td style={{ fontFamily: 'JetBrains Mono', color: 'var(--red)' }}>{parseFloat(r['Desc Retardos']) > 0 ? fmt(r['Desc Retardos']) : '-'}</td>
                         <td style={{ fontFamily: 'JetBrains Mono', fontWeight: 600, color: 'var(--gold)' }}>{fmt(r['Total a Pagar'])}</td>
                       </tr>
                       {isExpanded && (
