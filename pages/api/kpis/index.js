@@ -7,9 +7,8 @@ export default async function handler(req, res) {
   try {
     const { semana } = req.query;
 
-    const filter = semana ? `{Semana}='${semana}'` : '';
+    // Always fetch ALL nomina records so the full semanas list is available
     const nominaRecords = await fetchAll(TABLE_NOMINA, {
-      filterByFormula: filter || undefined,
       sort: [{ field: 'Semana', direction: 'desc' }],
     });
 
