@@ -14,9 +14,9 @@ function cleanFields(body) {
   if (body['Sueldo Semanal'] != null) fields['Sueldo Semanal'] = parseFloat(body['Sueldo Semanal']) || 0;
   if (body['Salario Diario'] != null) fields['Salario Diario'] = parseFloat(body['Salario Diario']) || 0;
   if (body['Costo por Hora'] != null) fields['Costo por Hora'] = parseFloat(body['Costo por Hora']) || 0;
-  if (body['Código Sésamo'] != null) {
-    const v = parseInt(body['Código Sésamo']);
-    fields['Código Sésamo'] = isNaN(v) ? null : v;
+  if (body['Código Sesame'] != null) {
+    const v = parseInt(body['Código Sesame']);
+    fields['Código Sesame'] = isNaN(v) ? null : v;
   }
   if (body['Descuento IMSS'] != null) fields['Descuento IMSS'] = parseFloat(body['Descuento IMSS']) || 0;
   if (body['Descuento INFONAVIT'] != null) fields['Descuento INFONAVIT'] = parseFloat(body['Descuento INFONAVIT']) || 0;
@@ -26,8 +26,8 @@ function cleanFields(body) {
   if (body['Ubicación'] != null) fields['Ubicación'] = body['Ubicación'] || null;
   if (body['Obra'] != null) fields['Obra'] = body['Obra'] || null;
   if (body['Tipo Jornada'] != null) fields['Tipo Jornada'] = body['Tipo Jornada'] || null;
-  if (body['Centro Sésamo'] != null) fields['Centro Sésamo'] = body['Centro Sésamo'] || null;
-  if (body['Depto Sésamo'] != null) fields['Depto Sésamo'] = body['Depto Sésamo'] || null;
+  if (body['Centro Sesame'] != null) fields['Centro Sesame'] = body['Centro Sesame'] || null;
+  if (body['Depto Sesame'] != null) fields['Depto Sesame'] = body['Depto Sesame'] || null;
   if (body['Tipo Pago'] != null) fields['Tipo Pago'] = body['Tipo Pago'] || null;
 
   // Checkbox → boolean

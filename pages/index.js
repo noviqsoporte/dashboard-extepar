@@ -107,7 +107,7 @@ export default function Dashboard() {
       {!d.nominaProcesados ? (
         <div className="card" style={{ textAlign: 'center', padding: 60 }}>
           <p style={{ color: 'var(--text-muted)', fontSize: 15 }}>No hay nóminas procesadas aún.</p>
-          <p style={{ color: 'var(--text-muted)', fontSize: 13, marginTop: 8 }}>Ve a "Procesar Nómina" para subir archivos de Sésamo.</p>
+          <p style={{ color: 'var(--text-muted)', fontSize: 13, marginTop: 8 }}>Ve a "Procesar Nómina" para subir archivos de Sesame.</p>
         </div>
       ) : (
         <>
@@ -133,7 +133,7 @@ export default function Dashboard() {
           <div className="section-title">Empleados</div>
           <div className="kpi-grid">
             <KPI label="Empleados Activos" value={d.totalEmpleados} />
-            <KPI label="Tipo Sésamo" value={d.empleadosSesamo} cls="blue" />
+            <KPI label="Tipo Sesame" value={d.empleadosSesamo} cls="blue" />
             <KPI label="Tipo Fijo" value={d.empleadosFijo} cls="gold" />
             <KPI label="Procesados Esta Semana" value={d.nominaProcesados} cls="green" />
           </div>

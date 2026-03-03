@@ -4,7 +4,7 @@ import Toast from '../components/Toast';
 
 const STEPS = [
   { at: 0, label: 'Enviando archivos a n8n...' },
-  { at: 8, label: 'Procesando archivos de Sésamo...' },
+  { at: 8, label: 'Procesando archivos de Sesame...' },
   { at: 20, label: 'Cruzando con Airtable Empleados...' },
   { at: 35, label: 'Calculando nómina semanal...' },
   { at: 55, label: 'Guardando en Airtable...' },
@@ -118,7 +118,7 @@ export default function ProcesarNomina() {
     <>
       <div className="page-header">
         <h2>Procesar Nómina</h2>
-        <p>Sube los archivos Excel de Sésamo para calcular la nómina semanal</p>
+        <p>Sube los archivos Excel de Sesame para calcular la nómina semanal</p>
       </div>
 
       {!processing && (
@@ -130,7 +130,7 @@ export default function ProcesarNomina() {
           onClick={() => inputRef.current?.click()}
         >
           <Upload size={36} />
-          <p>Arrastra archivos de Sésamo aquí o haz clic para seleccionar</p>
+          <p>Arrastra archivos de Sesame aquí o haz clic para seleccionar</p>
           <p className="upload-hint">Acepta .xlsx — Puedes subir múltiples archivos (Oficina, Parks, Vaso Regulador, etc.)</p>
           <input ref={inputRef} type="file" accept=".xlsx,.xls" multiple hidden onChange={e => addFiles(e.target.files)} />
         </div>

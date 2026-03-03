@@ -28,7 +28,7 @@ export default async function handler(req, res) {
       : nominaRecords;
 
     const totalEmpleados = empleadosRecords.filter(isActive).length;
-    const empleadosSesamo = empleadosRecords.filter(r => r.fields['Tipo Pago'] === 'Sésamo' && isActive(r)).length;
+    const empleadosSesamo = empleadosRecords.filter(r => r.fields['Tipo Pago'] === 'Sesame' && isActive(r)).length;
     const empleadosFijo = empleadosRecords.filter(r => r.fields['Tipo Pago'] === 'Fijo' && isActive(r)).length;
 
     let nominaBase = 0, totalHE = 0, totalDescFaltas = 0, totalDescRetardos = 0;

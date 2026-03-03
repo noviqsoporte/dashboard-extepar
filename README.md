@@ -80,7 +80,7 @@ Frontend (React pages)
 |---------|------|--------------|
 | Dashboard | `/` | KPIs, gráficas por ubicación, top empleados |
 | Empleados | `/empleados` | CRUD completo (crear, editar, eliminar) |
-| Procesar Nómina | `/nomina` | Upload de archivos Sésamo → n8n |
+| Procesar Nómina | `/nomina` | Upload de archivos Sesame → n8n |
 | Historial | `/historial` | Consultar nóminas procesadas por semana |
 | Ubicaciones | `/ubicaciones` | Ver/editar horarios por ubicación |
 | Días Festivos | `/festivos` | CRUD de días festivos |

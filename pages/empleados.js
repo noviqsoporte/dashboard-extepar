@@ -4,13 +4,13 @@ import Toast from '../components/Toast';
 
 const UBICACIONES = ['Oficina', 'Vaso Regulador', 'Parks', 'Taller', 'Tajuelo', 'Terremoto'];
 const OBRAS = ['OFICINA', 'B005', 'B007', 'PARKS', 'TALLER', 'TAJUELO', 'TERREMOTO'];
-const TIPOS_PAGO = ['Sésamo', 'Fijo'];
+const TIPOS_PAGO = ['Sesame', 'Fijo'];
 const JORNADAS = ['Oficina', 'Obra'];
 
 const empty = {
   'Nombre Completo': '', Puesto: '', 'Ubicación': 'Oficina', Obra: 'OFICINA',
-  'Sueldo Semanal': '', 'Tipo Jornada': 'Oficina', 'Código Sésamo': '',
-  'Centro Sésamo': '', 'Depto Sésamo': '', Activo: 'Sí', 'Tipo Pago': 'Sésamo',
+  'Sueldo Semanal': '', 'Tipo Jornada': 'Oficina', 'Código Sesame': '',
+  'Centro Sesame': '', 'Depto Sesame': '', Activo: 'Sí', 'Tipo Pago': 'Sesame',
   'Descuento IMSS': 0, 'Descuento INFONAVIT': 0, 'Desc Préstamos': 0, 'Notas Estela': '',
 };
 
@@ -62,9 +62,9 @@ export default function Empleados() {
         'Salario Diario': salDiario,
         'Costo por Hora': costoHora,
         'Tipo Jornada': form['Tipo Jornada'],
-        'Código Sésamo': form['Código Sésamo'],
-        'Centro Sésamo': form['Centro Sésamo'],
-        'Depto Sésamo': form['Depto Sésamo'],
+        'Código Sesame': form['Código Sesame'],
+        'Centro Sesame': form['Centro Sesame'],
+        'Depto Sesame': form['Depto Sesame'],
         Activo: form.Activo,
         'Tipo Pago': form['Tipo Pago'],
         'Descuento IMSS': form['Descuento IMSS'],
@@ -112,7 +112,7 @@ export default function Empleados() {
 
   const filtered = data.filter(e => {
     const s = search.toLowerCase();
-    const matchSearch = !s || (e['Nombre Completo'] || '').toLowerCase().includes(s) || String(e['Código Sésamo'] || '').includes(s);
+    const matchSearch = !s || (e['Nombre Completo'] || '').toLowerCase().includes(s) || String(e['Código Sesame'] || '').includes(s);
     const matchUb = !filterUb || e['Ubicación'] === filterUb;
     const matchTipo = !filterTipo || e['Tipo Pago'] === filterTipo;
     return matchSearch && matchUb && matchTipo;
@@ -151,7 +151,7 @@ export default function Empleados() {
             <thead>
               <tr>
                 <th>No.</th><th>Nombre</th><th>Puesto</th><th>Ubicación</th>
-                <th>Sueldo</th><th>Cód. Sésamo</th><th>Tipo</th><th>Activo</th><th></th>
+                <th>Sueldo</th><th>Cód. Sesame</th><th>Tipo</th><th>Activo</th><th></th>
               </tr>
             </thead>
             <tbody>
@@ -162,8 +162,8 @@ export default function Empleados() {
                   <td>{e.Puesto || '-'}</td>
                   <td><span className={`badge badge-${e['Ubicación'] === 'Oficina' ? 'blue' : 'green'}`}>{e['Ubicación']}</span></td>
                   <td style={{ fontFamily: 'JetBrains Mono' }}>{fmtMoney(e['Sueldo Semanal'])}</td>
-                  <td style={{ fontFamily: 'JetBrains Mono', color: e['Código Sésamo'] ? 'var(--gold)' : 'var(--text-muted)' }}>
-                    {e['Código Sésamo'] || '-'}
+                  <td style={{ fontFamily: 'JetBrains Mono', color: e['Código Sesame'] ? 'var(--gold)' : 'var(--text-muted)' }}>
+                    {e['Código Sesame'] || '-'}
                   </td>
                   <td><span className={`badge badge-${e['Tipo Pago'] === 'Fijo' ? 'gold' : 'blue'}`}>{e['Tipo Pago']}</span></td>
                   <td><span className={`status-dot ${e.Activo === 'Sí' ? 'active' : 'inactive'}`} />{e.Activo}</td>
@@ -233,8 +233,8 @@ export default function Empleados() {
 
             <div className="form-row">
               <div className="form-group">
-                <label className="form-label">Código Sésamo</label>
-                <input className="form-input" type="number" value={form['Código Sésamo'] || ''} onChange={e => setForm({ ...form, 'Código Sésamo': e.target.value })} />
+                <label className="form-label">Código Sesame</label>
+                <input className="form-input" type="number" value={form['Código Sesame'] || ''} onChange={e => setForm({ ...form, 'Código Sesame': e.target.value })} />
               </div>
               <div className="form-group">
                 <label className="form-label">Activo</label>
@@ -247,12 +247,12 @@ export default function Empleados() {
 
             <div className="form-row">
               <div className="form-group">
-                <label className="form-label">Centro Sésamo</label>
-                <input className="form-input" value={form['Centro Sésamo'] || ''} onChange={e => setForm({ ...form, 'Centro Sésamo': e.target.value })} />
+                <label className="form-label">Centro Sesame</label>
+                <input className="form-input" value={form['Centro Sesame'] || ''} onChange={e => setForm({ ...form, 'Centro Sesame': e.target.value })} />
               </div>
               <div className="form-group">
-                <label className="form-label">Depto Sésamo</label>
-                <input className="form-input" value={form['Depto Sésamo'] || ''} onChange={e => setForm({ ...form, 'Depto Sésamo': e.target.value })} />
+                <label className="form-label">Depto Sesame</label>
+                <input className="form-input" value={form['Depto Sesame'] || ''} onChange={e => setForm({ ...form, 'Depto Sesame': e.target.value })} />
               </div>
             </div>
 
