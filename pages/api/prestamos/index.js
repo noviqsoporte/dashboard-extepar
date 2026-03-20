@@ -22,7 +22,17 @@ export default async function handler(req, res) {
         ]
       });
 
-      const data = records.map(r => ({
+      // Deduplicate by record id just in case pagination returns overlapping pages
+      const uniqueRecords = [];
+      const seenIds = new Set();
+      for (const r of records) {
+        if (!seenIds.has(r.id)) {
+          seenIds.add(r.id);
+          uniqueRecords.push(r);
+        }
+      }
+
+      const data = uniqueRecords.map(r => ({
         id: r.id,
         ...r.fields,
         Activo: r.fields.Activo === true || r.fields.Activo === 'Sí' ? 'Sí' : 'No',
