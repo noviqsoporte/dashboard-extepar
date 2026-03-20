@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import { LayoutDashboard, Users, FileSpreadsheet, Clock, MapPin, Settings, CalendarDays, Upload, Menu, X } from 'lucide-react';
+import { LayoutDashboard, Users, FileSpreadsheet, Clock, MapPin, Settings, CalendarDays, Upload, Menu, X, Wallet } from 'lucide-react';
 import { useState } from 'react';
 
 const NAV = [
@@ -7,6 +7,7 @@ const NAV = [
   { href: '/empleados', label: 'Empleados', icon: Users },
   { href: '/nomina', label: 'Procesar Nómina', icon: Upload },
   { href: '/historial', label: 'Historial Nómina', icon: FileSpreadsheet },
+  { href: '/prestamos', label: 'Préstamos', icon: Wallet },
   { href: '/ubicaciones', label: 'Ubicaciones', icon: MapPin },
   { href: '/festivos', label: 'Días Festivos', icon: CalendarDays },
   { href: '/reglas', label: 'Reglas de Negocio', icon: Settings },
