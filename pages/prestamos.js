@@ -19,7 +19,7 @@ function Combobox({ options, value, onChange, placeholder = "Escribe para buscar
 
   const filtered = query === '' 
     ? options 
-    : options.filter(opt => opt.label.toLowerCase().includes(query.toLowerCase()));
+    : options.filter(opt => (opt.label || '').toLowerCase().includes(query.toLowerCase()));
 
   const selectedOption = options.find(o => o.value === value);
 
