@@ -1,12 +1,102 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { Plus, Search, Edit2, Trash2, Wallet, Building, Landmark, Trash } from 'lucide-react';
 import Toast from '../components/Toast';
+
+function Combobox({ options, value, onChange, placeholder = "Escribe para buscar..." }) {
+  const [open, setOpen] = useState(false);
+  const [query, setQuery] = useState('');
+  const wrapperRef = useRef(null);
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
+        setOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [wrapperRef]);
+
+  const filtered = query === '' 
+    ? options 
+    : options.filter(opt => opt.label.toLowerCase().includes(query.toLowerCase()));
+
+  const selectedOption = options.find(o => o.value === value);
+
+  return (
+    <div ref={wrapperRef} style={{ position: 'relative' }}>
+      <div style={{ position: 'relative' }}>
+        <input
+          className="form-input"
+          type="text"
+          placeholder={placeholder}
+          value={open ? query : (selectedOption ? selectedOption.label : '')}
+          onChange={(e) => {
+            setQuery(e.target.value);
+            if (!open) setOpen(true);
+          }}
+          onClick={() => { setOpen(true); setQuery(''); }}
+          style={{ cursor: 'text', paddingRight: 30 }}
+        />
+        <div style={{ position: 'absolute', right: 10, top: 10, pointerEvents: 'none' }}>
+          <Search size={16} color="var(--text-muted)" />
+        </div>
+      </div>
+      {open && (
+        <div style={{
+          position: 'absolute',
+          top: '100%',
+          left: 0,
+          right: 0,
+          marginTop: 4,
+          maxHeight: 250,
+          overflowY: 'auto',
+          background: 'var(--bg-card, #fff)',
+          border: '1px solid var(--border)',
+          borderRadius: 6,
+          boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+          zIndex: 100
+        }}>
+          {filtered.length === 0 ? (
+            <div style={{ padding: '10px 12px', color: 'var(--text-muted)', fontSize: 14 }}>Sin resultados</div>
+          ) : (
+            filtered.map(opt => (
+              <div
+                key={opt.value}
+                onClick={() => {
+                  onChange(opt.value);
+                  setOpen(false);
+                }}
+                style={{
+                  padding: '10px 12px',
+                  cursor: 'pointer',
+                  borderBottom: '1px solid var(--border)',
+                  backgroundColor: value === opt.value ? 'rgba(14, 165, 233, 0.1)' : 'transparent',
+                  color: value === opt.value ? 'var(--blue)' : 'var(--text-primary)',
+                  fontSize: 14
+                }}
+                onMouseEnter={e => {
+                  if (value !== opt.value) e.currentTarget.style.backgroundColor = 'var(--bg-body, #f8fafc)';
+                }}
+                onMouseLeave={e => {
+                  if (value !== opt.value) e.currentTarget.style.backgroundColor = 'transparent';
+                }}
+              >
+                {opt.label}
+              </div>
+            ))
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function Prestamos() {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
-  const [activeTab, setActiveTab] = useState('personales'); // personales, infonavit, fonacot
+  const [activeTab, setActiveTab] = useState('todos'); // todos, personales, infonavit, fonacot
   const [modal, setModal] = useState(null); // { type: 'new' | 'edit', tab: 'personales' | 'infonavit' | 'fonacot', employee: object }
   const [form, setForm] = useState({});
   const [saving, setSaving] = useState(false);
@@ -74,7 +164,16 @@ export default function Prestamos() {
   }, [data]);
 
   const filteredList = useMemo(() => {
-    const list = lists[activeTab] || [];
+    let list = [];
+    if (activeTab === 'todos') {
+      list = [
+        ...lists.personales.map(e => ({ ...e, _tipo: 'Personal', _monto: e['Préstamo Monto Total'] || 0, _desc: e['Préstamo Desc Semanal'] || 0, _saldo: e['Préstamo Saldo'] || 0 })),
+        ...lists.infonavit.map(e => ({ ...e, _tipo: 'INFONAVIT', _desc: e['INFONAVIT Desc Semanal'] || 0, _sem: e['INFONAVIT Semanas Restantes'] || 0 })),
+        ...lists.fonacot.map(e => ({ ...e, _tipo: 'FONACOT', _desc: e['FONACOT Desc Semanal'] || 0, _sem: e['FONACOT Semanas Restantes'] || 0 }))
+      ];
+    } else {
+      list = lists[activeTab] || [];
+    }
     const s = search.toLowerCase();
     if (!s) return list;
     return list.filter(e => (e['Nombre Completo'] || '').toLowerCase().includes(s));
@@ -228,16 +327,26 @@ export default function Prestamos() {
         </div>
       </div>
 
-      <div className="tabs">
-        <button className={`tab ${activeTab === 'personales' ? 'active' : ''}`} onClick={() => setActiveTab('personales')}>
-          Préstamos Personales
-        </button>
-        <button className={`tab ${activeTab === 'infonavit' ? 'active' : ''}`} onClick={() => setActiveTab('infonavit')}>
-          INFONAVIT
-        </button>
-        <button className={`tab ${activeTab === 'fonacot' ? 'active' : ''}`} onClick={() => setActiveTab('fonacot')}>
-          FONACOT
-        </button>
+      <div className="tabs" style={{ display: 'flex', gap: 8 }}>
+        {['todos', 'personales', 'infonavit', 'fonacot'].map(t => (
+          <button 
+            key={t}
+            onClick={() => setActiveTab(t)}
+            style={{
+              padding: '8px 16px',
+              border: activeTab === t ? '1px solid #c9a84c' : '1px solid var(--border)',
+              background: activeTab === t ? '#c9a84c' : 'transparent',
+              color: activeTab === t ? '#000' : 'var(--text-primary)',
+              borderRadius: 6,
+              fontWeight: 500,
+              cursor: 'pointer',
+              transition: 'all 0.2s',
+              fontSize: 14
+            }}
+          >
+            {t === 'todos' ? 'Todos' : t === 'personales' ? 'Préstamos Personales' : t === 'infonavit' ? 'INFONAVIT' : 'FONACOT'}
+          </button>
+        ))}
       </div>
 
       <div className="toolbar" style={{ marginTop: 20 }}>
@@ -245,7 +354,9 @@ export default function Prestamos() {
           <Search size={16} style={{ position: 'absolute', left: 12, top: 10, color: 'var(--text-muted)' }} />
           <input className="form-input" placeholder="Buscar empleado..." value={search} onChange={e => setSearch(e.target.value)} style={{ paddingLeft: 36 }} />
         </div>
-        <button className="btn btn-primary" onClick={openNew}><Plus size={16} /> Agregar Requisición</button>
+        {activeTab !== 'todos' && (
+          <button className="btn btn-primary" onClick={openNew}><Plus size={16} /> Agregar Requisición</button>
+        )}
       </div>
 
       {loading ? (
@@ -254,6 +365,11 @@ export default function Prestamos() {
         <div className="data-table-wrap" style={{ maxHeight: 'calc(100vh - 380px)', overflow: 'auto' }}>
           <table className="data-table">
             <thead>
+              {activeTab === 'todos' && (
+                <tr>
+                  <th>Empleado</th><th>Ubicación</th><th>Tipo</th><th>Desc. Semanal</th><th>Detalle</th><th>Status</th>
+                </tr>
+              )}
               {activeTab === 'personales' && (
                 <tr>
                   <th>Empleado</th><th>Ubicación</th><th>Monto Total</th><th>Desc. Semanal</th><th>Saldo Pendiente</th><th>Progreso</th><th>Status</th><th></th>
@@ -267,7 +383,40 @@ export default function Prestamos() {
             </thead>
             <tbody>
               {filteredList.map((e) => {
-                if (activeTab === 'personales') {
+                if (activeTab === 'todos') {
+                  let statusStr = "Activo";
+                  let statusColor = "var(--blue)";
+                  let detail = "";
+                  
+                  if (e._tipo === 'Personal') {
+                    const prog = e._monto > 0 ? Math.min(100, Math.max(0, ((e._monto - e._saldo) / e._monto) * 100)) : 100;
+                    if (e._saldo <= 0) { statusStr = "Liquidado"; statusColor = "var(--green)"; }
+                    else if (e._saldo < e._desc * 3) { statusStr = "Por terminar"; statusColor = "var(--gold)"; }
+                    detail = `Saldo: ${fmtMoney(e._saldo)} / ${fmtMoney(e._monto)}`;
+                  } else {
+                    statusColor = e._tipo === 'INFONAVIT' ? "var(--green)" : "#a855f7";
+                    if (e._sem <= 0) { statusStr = "Terminado"; statusColor = "var(--text-muted)"; }
+                    else if (e._sem <= 4) { statusStr = "Por terminar"; statusColor = "var(--gold)"; }
+                    detail = `${e._sem} semanas rest.`;
+                  }
+                  
+                  return (
+                    <tr key={e.id + e._tipo}>
+                      <td style={{ color: 'var(--text-primary)', fontWeight: 500 }}>{e['Nombre Completo']}</td>
+                      <td><span className={`badge badge-${e['Ubicación'] === 'Oficina' ? 'blue' : 'green'}`}>{e['Ubicación'] || '-'}</span></td>
+                      <td>
+                        <span style={{ 
+                          fontSize: 12, fontWeight: 500, padding: '4px 8px', borderRadius: 12,
+                          background: e._tipo === 'Personal' ? 'rgba(14, 165, 233, 0.1)' : e._tipo === 'INFONAVIT' ? 'rgba(34, 197, 94, 0.1)' : 'rgba(168, 85, 247, 0.1)',
+                          color: e._tipo === 'Personal' ? 'var(--blue)' : e._tipo === 'INFONAVIT' ? 'var(--green)' : '#a855f7'
+                        }}>{e._tipo}</span>
+                      </td>
+                      <td style={{ fontFamily: 'JetBrains Mono' }}>{fmtMoney(e._desc)}</td>
+                      <td style={{ fontSize: 13, color: 'var(--text-muted)' }}>{detail}</td>
+                      <td><span style={{ color: statusColor, fontSize: 12, fontWeight: 500 }}>{statusStr}</span></td>
+                    </tr>
+                  )
+                } else if (activeTab === 'personales') {
                   const monto = e['Préstamo Monto Total'] || 0;
                   const desc = e['Préstamo Desc Semanal'] || 0;
                   const saldo = e['Préstamo Saldo'] || 0;
@@ -343,10 +492,12 @@ export default function Prestamos() {
             {modal.type === 'new' ? (
               <div className="form-group">
                 <label className="form-label">Empleado *</label>
-                <select className="form-select" value={form.employeeId} onChange={e => setForm({ ...form, employeeId: e.target.value })}>
-                  <option value="">Selecciona un empleado...</option>
-                  {employeesWithoutActiveLoan.map(e => <option key={e.id} value={e.id}>{e['Nombre Completo']}</option>)}
-                </select>
+                <Combobox
+                  options={employeesWithoutActiveLoan.map(e => ({ value: e.id, label: e['Nombre Completo'] }))}
+                  value={form.employeeId}
+                  onChange={val => setForm({ ...form, employeeId: val })}
+                  placeholder="Escribe para buscar un empleado..."
+                />
               </div>
             ) : (
               <div className="form-group">
