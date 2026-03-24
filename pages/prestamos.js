@@ -179,16 +179,6 @@ export default function Prestamos() {
     return list.filter(e => (e['Nombre Completo'] || '').toLowerCase().includes(s));
   }, [lists, activeTab, search]);
 
-  const employeesWithoutActiveLoan = useMemo(() => {
-    return data.filter(emp => {
-      if (activeTab === 'personales') return !(emp['Préstamo Saldo'] > 0 || emp['Préstamo Desc Semanal'] > 0);
-      if (activeTab === 'infonavit') return !(emp['INFONAVIT Semanas Restantes'] > 0 || emp['INFONAVIT Desc Semanal'] > 0);
-      if (activeTab === 'fonacot') return !(emp['FONACOT Semanas Restantes'] > 0 || emp['FONACOT Desc Semanal'] > 0);
-      return true;
-    });
-  }, [data, activeTab]);
-
-
   function openNew() {
     setForm({
       employeeId: '',
@@ -493,7 +483,7 @@ export default function Prestamos() {
               <div className="form-group">
                 <label className="form-label">Empleado *</label>
                 <Combobox
-                  options={employeesWithoutActiveLoan.map(e => ({ value: e.id, label: e['Nombre Completo'] }))}
+                  options={data.map(e => ({ value: e.id, label: e['Nombre Completo'] }))}
                   value={form.employeeId}
                   onChange={val => setForm({ ...form, employeeId: val })}
                   placeholder="Escribe para buscar un empleado..."

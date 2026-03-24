@@ -31,9 +31,13 @@ function cleanFields(body) {
   if (body['Tipo Pago'] != null) fields['Tipo Pago'] = body['Tipo Pago'] || null;
 
   // Checkbox → boolean
+  // Checkbox → boolean
   if (body['Activo'] != null) {
     const v = body['Activo'];
     fields['Activo'] = v === true || v === 'true' || v === 'Sí' || v === 'Si';
+  }
+  if (body['Timbrado'] != null) {
+    fields['Timbrado'] = body['Timbrado'] === true || body['Timbrado'] === 'true';
   }
 
   return fields;
@@ -49,6 +53,7 @@ export default async function handler(req, res) {
         id: r.id,
         ...r.fields,
         Activo: r.fields.Activo === true ? 'Sí' : 'No',
+        Timbrado: r.fields.Timbrado === true,
       }));
       return res.json(data);
     }

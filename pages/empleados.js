@@ -12,6 +12,7 @@ const empty = {
   'Sueldo Semanal': '', 'Tipo Jornada': 'Oficina', 'Código Sesame': '',
   'Centro Sesame': '', 'Depto Sesame': '', Activo: 'Sí', 'Tipo Pago': 'Sesame',
   'Descuento IMSS': 0, 'Descuento INFONAVIT': 0, 'Desc Préstamos': 0, 'Notas Estela': '',
+  Timbrado: false,
 };
 
 export default function Empleados() {
@@ -71,6 +72,7 @@ export default function Empleados() {
         'Descuento INFONAVIT': form['Descuento INFONAVIT'],
         'Desc Préstamos': form['Desc Préstamos'],
         'Notas Estela': form['Notas Estela'],
+        Timbrado: !!form.Timbrado,
       };
 
       if (modal === 'edit') body.id = form.id;
@@ -107,6 +109,27 @@ export default function Empleados() {
       load();
     } catch (e) {
       setToast({ message: 'Error al eliminar', type: 'error' });
+    }
+  }
+
+  async function toggleTimbrado(emp) {
+    const newVal = !emp.Timbrado;
+    setData(prev => prev.map(e => e.id === emp.id ? { ...e, Timbrado: newVal } : e));
+    
+    try {
+      const res = await fetch('/api/empleados', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: emp.id, Timbrado: newVal }),
+      });
+
+      if (!res.ok) {
+        throw new Error('Error al actualizar Timbrado');
+      }
+      setToast({ message: `Timbrado ${newVal ? 'activado' : 'desactivado'} para ${emp['Nombre Completo']}`, type: 'success' });
+    } catch (e) {
+      setToast({ message: e.message, type: 'error' });
+      load();
     }
   }
 
@@ -151,7 +174,7 @@ export default function Empleados() {
             <thead>
               <tr>
                 <th>No.</th><th>Nombre</th><th>Puesto</th><th>Ubicación</th>
-                <th>Sueldo</th><th>Cód. Sesame</th><th>Tipo</th><th>Activo</th><th></th>
+                <th>Sueldo</th><th>Cód. Sesame</th><th>Tipo</th><th>Activo</th><th>Timbrado</th><th></th>
               </tr>
             </thead>
             <tbody>
@@ -167,6 +190,15 @@ export default function Empleados() {
                   </td>
                   <td><span className={`badge badge-${e['Tipo Pago'] === 'Fijo' ? 'gold' : 'blue'}`}>{e['Tipo Pago']}</span></td>
                   <td><span className={`status-dot ${e.Activo === 'Sí' ? 'active' : 'inactive'}`} />{e.Activo}</td>
+                  <td style={{ textAlign: 'center' }}>
+                    <input 
+                      type="checkbox" 
+                      className="form-checkbox"
+                      checked={!!e.Timbrado} 
+                      onChange={() => toggleTimbrado(e)} 
+                      style={{ cursor: 'pointer', width: 16, height: 16 }}
+                    />
+                  </td>
                   <td style={{ display: 'flex', gap: 4 }}>
                     <button className="btn-icon" onClick={() => openEdit(e)}><Edit2 size={14} /></button>
                     <button className="btn-icon" onClick={() => remove(e)} style={{ color: 'var(--red)' }}><Trash2 size={14} /></button>
@@ -275,6 +307,11 @@ export default function Empleados() {
             <div className="form-group">
               <label className="form-label">Notas</label>
               <input className="form-input" value={form['Notas Estela'] || ''} onChange={e => setForm({ ...form, 'Notas Estela': e.target.value })} />
+            </div>
+
+            <div className="form-group" style={{ marginTop: 16, display: 'flex', alignItems: 'center', gap: 8 }}>
+              <input type="checkbox" className="form-checkbox" style={{ width: 18, height: 18, cursor: 'pointer' }} checked={!!form.Timbrado} onChange={e => setForm({ ...form, Timbrado: e.target.checked })} id="timbrado-checkbox" />
+              <label className="form-label" style={{ marginBottom: 0, cursor: 'pointer' }} htmlFor="timbrado-checkbox">Timbrado</label>
             </div>
 
             <div className="modal-actions">
